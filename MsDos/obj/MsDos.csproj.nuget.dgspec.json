@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "X:\\Programus\\MsDos\\MsDos\\MsDos.csproj": {}
+    "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj": {}
   },
   "projects": {
-    "X:\\Programus\\MsDos\\MsDos\\MsDos.csproj": {
+    "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "X:\\Programus\\MsDos\\MsDos\\MsDos.csproj",
+        "projectUniqueName": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj",
         "projectName": "MsDos",
-        "projectPath": "X:\\Programus\\MsDos\\MsDos\\MsDos.csproj",
-        "packagesPath": "C:\\Users\\chobotskytomas\\.nuget\\packages\\",
-        "outputPath": "X:\\Programus\\MsDos\\MsDos\\obj\\",
+        "projectPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj",
+        "packagesPath": "C:\\Users\\tocho\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\chobotskytomas\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\tocho\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -57,7 +54,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
