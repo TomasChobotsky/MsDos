@@ -1,0 +1,16 @@
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.exe
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.deps.json
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.runtimeconfig.json
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.runtimeconfig.dev.json
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.dll
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\ref\MsDos.dll
+X:\Programus\MsDos\MsDos\bin\Debug\net5.0\MsDos.pdb
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.csproj.AssemblyReference.cache
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.GeneratedMSBuildEditorConfig.editorconfig
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.AssemblyInfoInputs.cache
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.AssemblyInfo.cs
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.csproj.CoreCompileInputs.cache
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.dll
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\ref\MsDos.dll
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.pdb
+X:\Programus\MsDos\MsDos\obj\Debug\net5.0\MsDos.genruntimeconfig.cache
