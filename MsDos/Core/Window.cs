@@ -7,67 +7,29 @@ using System.Timers;
 
 namespace MsDos
 {
-    public class Window : Component
+    public static class Window
     {
-        public bool IsResizing = false;
-        public int SelectedWindow = 0;
+        public static bool IsResizing = false;
+        public static int SelectedWindow = 0;
+        public static int Width = Console.WindowWidth;
+        public static int Height = Console.WindowHeight;
+        public static Pixel[,] Buffer { get; private set; }
+        public static Pixel[,] TempBuffer { get; private set; }
         
-        private ManagementWindow window1;
-        private ManagementWindow window2;
-        private bool isDrawn = false;
+        private static bool isDrawn = false;
 
-        private List<ManagementWindow> windows = new();
+        public delegate void ResizeEvent(int width, int height);
 
-        public Window(int width, int height)
+        public static event ResizeEvent WindowResizedEvent;
+
+        public static void Start()
         {
-            Console.WindowWidth = width;
-            Console.WindowHeight = height;
-            
-            Height = Console.WindowHeight;
-            Width = Console.WindowWidth;
-            
-            windows = new List<ManagementWindow>();
-            window1 = new ManagementWindow((int)Math.Floor(Width / 2.1), Height - 3, 1, 2, @"C:\");
-            window2 = new ManagementWindow((int)Math.Floor(Width / 2.1), Height - 3, window1.Width + window1.Width / 10, 2, @"D:\");
-            
-            windows.Add(window1);
-            windows.Add(window2);
-
             CreateWindow();
-            
             while(true)
             {
-                while (Console.KeyAvailable && !isDrawn)
-                {
-                    isDrawn = true;
-                    var input = Console.ReadKey(true);
-                    if (input.Key == ConsoleKey.Tab)
-                    {
-                        foreach (var window in windows)
-                            window.IsSelected = false;
-                        if (SelectedWindow < windows.Count - 1)
-                            SelectedWindow++;
-                        else
-                        {
-                            SelectedWindow = 0;
-                        }
-                    }
-
-                    if (input.Key == ConsoleKey.UpArrow)
-                    {
-                        windows[SelectedWindow].ChangeFocusedDirectory(-1);
-                    }
-
-                    if (input.Key == ConsoleKey.DownArrow)
-                    {
-                        windows[SelectedWindow].ChangeFocusedDirectory(1);
-                    }
-                    
-                    RerenderWindowBuffers();
-                }
                 if (Height != Console.WindowHeight || Width != Console.WindowWidth)
                 {
-                    //Necessary to be here to stop the statement above from being true
+                    //Necessary to be here to stop the statement above from being true IMMEDIATELY
                     Height = Console.WindowHeight;
                     Width = Console.WindowWidth;
 
@@ -75,8 +37,22 @@ namespace MsDos
                 }
             }
         }
+        
+        private static void FillBuffers(int width, int height)
+        {
+            Buffer = new Pixel[width, height];
+            TempBuffer = new Pixel[width, height];
 
-        private void CreateWindow()
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Buffer[x, y] = new Pixel(' ', ConsoleColor.Blue, ConsoleColor.White);
+                }
+            }
+        }
+
+        private static void CreateWindow()
         {
             Height = Console.WindowHeight;
             Width = Console.WindowWidth;
@@ -86,43 +62,14 @@ namespace MsDos
             RerenderWindowBuffers();
         }
 
-        public void RerenderWindowBuffers()
+        public static void RerenderWindowBuffers()
         {
-            window1.ResizeWindow((int)Math.Floor(Width / 2.1), Height - 3, 1, 2);
-            window2.ResizeWindow((int)Math.Floor(Width / 2.1), Height - 3, window1.Width + window1.Width / 10, 2);
-            
-            windows[SelectedWindow].IsSelected = true;
-            
-            window1.WriteToBuffer();
-            window2.WriteToBuffer();
-
-            ConnectBuffers();
-
             Render();
         }
 
-        public void ConnectBuffers()
-        {
-            try
-            {
-                foreach (var window in windows)
-                {
-                    for (var y = window.PosY; y < window.Height - 1 + window.PosY; y++)
-                    {
-                        for (var x = window.PosX; x < window.Width + window.PosX; x++)
-                            Buffer[x, y] = window.Buffer[x - window.PosX, y - window.PosY];
-                    }
-                }
-            }
-            catch
-            {
-                return;
-            }
-        }
+        private static System.Timers.Timer _resizeTimer = new();
 
-        private System.Timers.Timer _resizeTimer = new();
-
-        void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
+        static void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
         {
             Console.CursorVisible = false;
             _resizeTimer.Enabled = false;
@@ -132,15 +79,16 @@ namespace MsDos
                 CreateWindow();
             }
         }
-        private void OnResize()
+        private static void OnResize()
         {
+            WindowResizedEvent?.Invoke(Width, Height);
             IsResizing = true;
             _resizeTimer.Interval = 500;
             _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);
             _resizeTimer.Enabled = true;
         }
 
-        public override void Render()
+        public static void Render()
         {
             IsResizing = false;
             for (var y = 0; y < Height - 1; y++)
