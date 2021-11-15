@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "MsDos.Example/1.0.0": {
+        "dependencies": {
+          "MsDos": "1.0.0"
+        },
+        "runtime": {
+          "MsDos.Example.dll": {}
+        }
+      },
+      "MsDos/1.0.0": {
+        "runtime": {
+          "MsDos.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MsDos.Example/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MsDos/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

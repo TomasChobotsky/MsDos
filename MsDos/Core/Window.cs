@@ -7,7 +7,7 @@ using System.Timers;
 
 namespace MsDos
 {
-    public class FileManager : Component
+    public class Window : Component
     {
         public bool IsResizing = false;
         public int SelectedWindow = 0;
@@ -18,8 +18,11 @@ namespace MsDos
 
         private List<ManagementWindow> windows = new();
 
-        public FileManager()
+        public Window(int width, int height)
         {
+            Console.WindowWidth = width;
+            Console.WindowHeight = height;
+            
             Height = Console.WindowHeight;
             Width = Console.WindowWidth;
             
