@@ -12,7 +12,7 @@ namespace MsDos
 
         public Component()
         {
-            Window.ResizeEvent += OnResize;
+            Window.WindowResizedEvent += OnResize;
         }
 
         public abstract void Render();

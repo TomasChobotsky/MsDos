@@ -8,7 +8,6 @@ namespace MsDos
         {
             Console.CursorVisible = false;
             Console.BufferHeight = Console.WindowHeight;
-            Window window = new Window(100, 50);
 
             Console.ReadKey();
         }
