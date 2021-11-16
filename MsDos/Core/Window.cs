@@ -4,25 +4,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using MsDos.Contracts;
 
-namespace MsDos
+namespace MsDos.Core
 {
-    public static class Window
+    public class Window : IWindow
     {
-        public static bool IsResizing = false;
-        public static int SelectedWindow = 0;
-        public static int Width = Console.WindowWidth;
-        public static int Height = Console.WindowHeight;
-        public static Pixel[,] Buffer { get; private set; }
-        public static Pixel[,] TempBuffer { get; private set; }
+        public bool IsResizing = false;
+        public int SelectedWindow = 0;
+        public int Width { get; set; } = Console.WindowWidth;
+        public int Height { get; set; } = Console.WindowHeight;
+        public Pixel[,] Buffer { get; set; }
+        public Pixel[,] TempBuffer { get; set; }
         
         private static bool isDrawn = false;
 
-        public delegate void ResizeEvent(int width, int height);
+        public event EventHandler WindowResizedEvent;
 
-        public static event ResizeEvent WindowResizedEvent;
-
-        public static void Start()
+        public void Start()
         {
             CreateWindow();
             while(true)
@@ -38,7 +37,7 @@ namespace MsDos
             }
         }
         
-        private static void FillBuffers(int width, int height)
+        private void FillBuffers(int width, int height)
         {
             Buffer = new Pixel[width, height];
             TempBuffer = new Pixel[width, height];
@@ -52,7 +51,7 @@ namespace MsDos
             }
         }
 
-        private static void CreateWindow()
+        private void CreateWindow()
         {
             Height = Console.WindowHeight;
             Width = Console.WindowWidth;
@@ -62,14 +61,14 @@ namespace MsDos
             RerenderWindowBuffers();
         }
 
-        public static void RerenderWindowBuffers()
+        public void RerenderWindowBuffers()
         {
             Render();
         }
 
-        private static System.Timers.Timer _resizeTimer = new();
+        private System.Timers.Timer _resizeTimer = new();
 
-        static void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
+        void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
         {
             Console.CursorVisible = false;
             _resizeTimer.Enabled = false;
@@ -79,16 +78,16 @@ namespace MsDos
                 CreateWindow();
             }
         }
-        private static void OnResize()
+        private void OnResize()
         {
-            WindowResizedEvent?.Invoke(Width, Height);
+            WindowResizedEvent?.Invoke(this, new EventArgs());
             IsResizing = true;
             _resizeTimer.Interval = 500;
             _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);
             _resizeTimer.Enabled = true;
         }
 
-        public static void Render()
+        public void Render()
         {
             IsResizing = false;
             for (var y = 0; y < Height - 1; y++)

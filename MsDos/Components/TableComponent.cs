@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MsDos.Contracts;
+using MsDos.Core;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -10,15 +12,15 @@ namespace MsDos
     public class TableComponent : Component
     {
         public List<Column> Columns { get; set; } = new List<Column>();
-        public string Header { get; set; }
         public List<DirFile> Directories { get; set; } = new List<DirFile>();
+        public string Header { get; set; }
         public bool IsSelected { get; set; } = false;
         public int SelectedIndex { get; set; } = 0;
 
         private int offset = 0;
         private int mouseY = 0;
         
-        public TableComponent(int width, int height, int posX, int posY, string header)
+        public TableComponent(int width, int height, int posX, int posY, string header, IWindow window) : base(window)
         {
             Width = width;
             Height = height;
@@ -59,20 +61,22 @@ namespace MsDos
             }
         }
 
-        public override void OnResize(int width, int height)
+        public override void OnResize(object sender, EventArgs e)
         {
-            if (mouseY > height)
+            if (mouseY > Window.Height)
             {
                 SelectedIndex = 0;
                 mouseY = 0;
                 offset = 0;
             }
             
-            Height = height;
-            Width = width;
+            Height = Window.Height;
+            Width = Window.Width;
             //PosX = posX;
             //PosY = posY;
         }
+
+        private void 
 
         public override void CreateComponent()
         {
