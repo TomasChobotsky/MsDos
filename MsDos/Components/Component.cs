@@ -19,6 +19,7 @@ namespace MsDos
         {
             Header = header;
             Window = window;
+            Window.ComponentControl.Components.Add(this);
             Window.WindowResizedEvent += OnResize;
         }
         

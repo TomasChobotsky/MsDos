@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 namespace MsDos.Components
 {
     /// <summary>
-    /// Controls interaction between different UI elements (for example: controls which element is currently selected or active)
+    /// Controls interaction between different UI elements (for example: controls which element is currently selected or active
     /// </summary>
-    class ComponentControl
+    public class ComponentControl
     {
+        public List<Component> Components { get; set; }
+        public int SelectedComponent { get; set; }= 0;
     }
 }

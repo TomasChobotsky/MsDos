@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using MsDos.Components;
 using MsDos.Contracts;
 
 namespace MsDos.Core
@@ -16,6 +17,7 @@ namespace MsDos.Core
         public int Height { get; set; } = Console.WindowHeight;
         public Pixel[,] Buffer { get; set; }
         public Pixel[,] TempBuffer { get; set; }
+        public ComponentControl ComponentControl { get; set; } = new ComponentControl();
         
         private static bool isDrawn = false;
 
