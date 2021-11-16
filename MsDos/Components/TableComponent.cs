@@ -42,11 +42,14 @@ namespace MsDos
         private int offset = 0;
         private int mouseY = 0;
         
-        public TableComponent(int width, int height, int posX, int posY, string header, IWindow window) : base(header, window)
+        public TableComponent(int width, int height, int percentX, int posY, string header, IWindow window) : base(header, window)
         {
             Width = width;
             Height = height;
-            PosX = posX;
+            
+            //PosX is currently defined in percentage to be responsible... Could be done with some kind of simplified FlexBox
+            //PosY doesn't need to be defined by percent, because it doesn't change when you resize your screen
+            PosX = Width * (percentX / 100);
             PosY = posY;
         }
 
@@ -99,9 +102,7 @@ namespace MsDos
             Height = Window.Height;
             Width = Window.Width;
             
-            //Currently sets static posX and posY with gap in the middle depending on the width and height of the component
-            //PosX = posX;
-            //PosY = posY;
+            PosX = Width * (PosX / 100);
         }
 
         public override void CreateBody()
@@ -141,6 +142,9 @@ namespace MsDos
             }
         }
 
+        /// <summary>
+        /// Currently only as a implementation... Could be utilized as a more optimized method of writing to the screen
+        /// </summary>
         public override void Render()
         {
             for (int y = 0; y < Height - 1; y++)
