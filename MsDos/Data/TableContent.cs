@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 
-namespace MsDos
+namespace MsDos.Data
 {
     //Tady jsem chtěl record struct ale není tu c# 10 peeposad
-    public record DirFile(bool IsSelected, string Name, string Date, string Size) {}
+    public record TableContent(bool IsSelected, string Value) {}
 }

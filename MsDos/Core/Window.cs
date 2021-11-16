@@ -89,17 +89,10 @@ namespace MsDos.Core
 
         public void Render()
         {
-            IsResizing = false;
             for (var y = 0; y < Height - 1; y++)
             {
                 for (var x = 0; x < Width; x++)
                 {
-                    if (IsResizing)
-                    {
-                        IsResizing = false;
-                        return;
-                    }
-                    
                     Console.SetCursorPosition(x, y);
 
                     if (Buffer[x, y] != TempBuffer[x, y])
@@ -111,8 +104,8 @@ namespace MsDos.Core
                     }
                 }
             }
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.White;
+
+            IsResizing = false;
             isDrawn = false;
         }
     }
