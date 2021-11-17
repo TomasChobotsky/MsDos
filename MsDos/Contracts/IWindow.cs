@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MsDos.Components;
+using MsDos.Core;
 
 namespace MsDos.Contracts
 {
@@ -18,6 +19,6 @@ namespace MsDos.Contracts
         void Start();
         void Render();
 
-        public event EventHandler WindowResizedEvent;
+        public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
     }
 }

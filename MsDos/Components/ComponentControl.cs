@@ -12,6 +12,6 @@ namespace MsDos.Components
     public class ComponentControl
     {
         public List<Component> Components { get; set; }
-        public int SelectedComponent { get; set; }= 0;
+        public int SelectedComponent { get; set; } = 0;
     }
 }

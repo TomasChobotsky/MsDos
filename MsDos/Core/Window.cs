@@ -21,7 +21,7 @@ namespace MsDos.Core
         
         private static bool isDrawn = false;
 
-        public event EventHandler WindowResizedEvent;
+        public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
 
         public void Start()
         {
@@ -82,7 +82,7 @@ namespace MsDos.Core
         }
         private void OnResize()
         {
-            WindowResizedEvent?.Invoke(this, new EventArgs());
+            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
             IsResizing = true;
             _resizeTimer.Interval = 500;
             _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);

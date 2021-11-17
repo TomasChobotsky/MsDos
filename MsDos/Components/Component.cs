@@ -24,13 +24,12 @@ namespace MsDos
         }
         
         /// <summary>
-        /// Use after you define all additional styling options and add all content
+        /// Currently only as a implementation... Could be utilized as a more optimized method of writing to the screen
         /// </summary>
-        public abstract void OnCreate();
         public abstract void Render();
         public abstract void CreateBody();
 
-        public virtual void OnResize(object sender, EventArgs e) { }
+        public virtual void OnResize(object sender, WindowResizedEventArgs e) { }
         
         /// <summary>
         /// Generates the border of current component given the specified attributes (thickness, color, type)

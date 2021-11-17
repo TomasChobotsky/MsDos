@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MsDos.Core;
 using MsDos.Data;
 
 namespace MsDos
@@ -41,20 +42,17 @@ namespace MsDos
 
         private int offset = 0;
         private int mouseY = 0;
-        
-        public TableComponent(int width, int height, int percentX, int posY, string header, IWindow window) : base(header, window)
+
+        public TableComponent(int width, int height, int percentX, int posY, string header, IWindow window) : base(
+            header, window)
         {
             Width = width;
             Height = height;
-            
+
             //PosX is currently defined in percentage to be responsible... Could be done with some kind of simplified FlexBox
             //PosY doesn't need to be defined by percent, because it doesn't change when you resize your screen
             PosX = Width * (percentX / 100);
             PosY = posY;
-        }
-
-        public override void OnCreate()
-        {
         }
 
         public void ChangeFocusedDirectory (int sum)
@@ -90,7 +88,7 @@ namespace MsDos
         }
         
         
-        public override void OnResize(object sender, EventArgs e)
+        public override void OnResize(object sender, WindowResizedEventArgs e)
         {
             if (mouseY > Window.Height)
             {
@@ -99,8 +97,8 @@ namespace MsDos
                 offset = 0;
             }
             
-            Height = Window.Height;
-            Width = Window.Width;
+            Height = e.Height;
+            Width = e.Width;
             
             PosX = Width * (PosX / 100);
         }
@@ -113,7 +111,7 @@ namespace MsDos
                 int columnWidth = Width * (column.Portion / 100);
                 int columnMiddle = columnWidth / 2;
 
-                for (int x = columnMiddle - column.Header.Length / 2; x < columnMiddle + column.Header.Length / 2; x++)
+                for (int x = (columnMiddle - column.Header.Length / 2) + columnStartX; x < (columnMiddle + column.Header.Length / 2) + columnStartX; x++)
                 {
                     Window.Buffer[x, 1] = new Pixel(column.Header[x - (columnMiddle - column.Header.Length / 2)],
                         ConsoleColor.Blue, ConsoleColor.White);
@@ -122,29 +120,29 @@ namespace MsDos
                 int y = 2;
                 foreach (var content in column.DeserializedContent)
                 {
+                    
                     if (y > Height - 3)
                     {
-                        Window.Buffer[columnWidth, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                         break;
                     }
+                    
+                    Window.Buffer[columnWidth, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
 
                     ConsoleColor bgColor = ConsoleColor.Blue;
                     ConsoleColor fgColor = ConsoleColor.White;
 
-                    for (int x = 0; x < content.Value.Length; x++)
+                    for (int x = columnStartX; x < content.Value.Length + columnStartX; x++)
                     {
-                        Window.Buffer[x + 1, y] = new Pixel(content.Value[x], bgColor, fgColor);
+                        Window.Buffer[x + 1, y] = new Pixel(content.Value[x - columnStartX], bgColor, fgColor);
                     }
 
                     y++;
                 }
 
+                columnStartX = columnWidth + columnStartX;
             }
         }
-
-        /// <summary>
-        /// Currently only as a implementation... Could be utilized as a more optimized method of writing to the screen
-        /// </summary>
+        
         public override void Render()
         {
             for (int y = 0; y < Height - 1; y++)
