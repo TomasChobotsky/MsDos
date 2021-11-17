@@ -23,6 +23,11 @@ namespace MsDos.Core
 
         public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
 
+        public Window()
+        {
+            FillBuffers(Width, Height);
+        }
+
         public void Start()
         {
             CreateWindow();
@@ -53,12 +58,11 @@ namespace MsDos.Core
             }
         }
 
-        private void CreateWindow()
+        public void CreateWindow()
         {
             Height = Console.WindowHeight;
             Width = Console.WindowWidth;
             Console.Clear();
-            FillBuffers(Width, Height);
 
             RerenderWindowBuffers();
         }

@@ -108,14 +108,23 @@ namespace MsDos
             int columnStartX = 0;
             foreach (var column in Columns)
             {
-                int columnWidth = Width * (column.Portion / 100);
-                int columnMiddle = columnWidth / 2;
+                int columnWidth = 0;
+                if (column.Portion == -1)
+                {
+                    columnWidth = Width - columnStartX - 1;
+                }
+                else
+                {
+                    columnWidth = (int)Math.Floor(Width * ((double)column.Portion / 100));
+                }
+                int columnMiddle = (int)Math.Ceiling((double)columnWidth / 2);
 
                 for (int x = (columnMiddle - column.Header.Length / 2) + columnStartX; x < (columnMiddle + column.Header.Length / 2) + columnStartX; x++)
                 {
-                    Window.Buffer[x, 1] = new Pixel(column.Header[x - (columnMiddle - column.Header.Length / 2)],
+                    Window.Buffer[x, 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
                         ConsoleColor.Blue, ConsoleColor.White);
                 }
+                Window.Buffer[columnWidth + columnStartX, 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
 
                 int y = 2;
                 foreach (var content in column.DeserializedContent)
@@ -126,13 +135,15 @@ namespace MsDos
                         break;
                     }
                     
-                    Window.Buffer[columnWidth, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                    Window.Buffer[columnWidth + columnStartX, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
 
                     ConsoleColor bgColor = ConsoleColor.Blue;
                     ConsoleColor fgColor = ConsoleColor.White;
 
-                    for (int x = columnStartX; x < content.Value.Length + columnStartX; x++)
+                    for (int x = columnStartX; x < columnWidth + columnStartX - 1; x++)
                     {
+                        if (x - columnStartX > content.Value.Length - 1)
+                            break;
                         Window.Buffer[x + 1, y] = new Pixel(content.Value[x - columnStartX], bgColor, fgColor);
                     }
 

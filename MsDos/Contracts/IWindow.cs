@@ -18,6 +18,7 @@ namespace MsDos.Contracts
 
         void Start();
         void Render();
+        void CreateWindow();
 
         public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
     }
