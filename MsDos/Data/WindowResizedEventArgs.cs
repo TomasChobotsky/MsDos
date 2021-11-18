@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using MsDos.Contracts;
 
-namespace MsDos.Core
+namespace MsDos.Data
 {
     public class WindowResizedEventArgs
     {

@@ -2,18 +2,24 @@
 using MsDos.Core;
 using System;
 using System.Threading.Tasks;
+using MsDos.Data;
 
 namespace MsDos
 {
     public abstract class Component
     {
-        public int Width { get; protected set; }
-        public int Height { get; protected set; }
-        public int PosX { get; protected set; }
-        public int PosY { get; protected set; }
-        public string Header { get; protected set; }
-        public bool IsSelected { get; protected set; } = false;
-        public IWindow Window { get; protected set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public double PercentWidth { get; set; }
+        public double PercentHeight { get; set; }
+        
+        public int PosX { get; set; }
+        public int PosY { get; set; }
+        public double PercentX { get; set; }
+        
+        public string Header { get; set; }
+        public bool IsSelected { get; set; } = false;
+        public IWindow Window { get; }
 
         public Component(string header,IWindow window)
         {

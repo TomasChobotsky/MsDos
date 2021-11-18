@@ -43,15 +43,18 @@ namespace MsDos
         private int offset = 0;
         private int mouseY = 0;
 
-        public TableComponent(int width, int height, int percentX, int posY, string header, IWindow window) : base(
+        public TableComponent(double percentWidth, double percentHeight, double percentX, int posY, string header, IWindow window) : base(
             header, window)
         {
-            Width = width;
-            Height = height;
+            PercentWidth = percentWidth;
+            PercentHeight = percentHeight;
+            Width = (int)Math.Round(window.Width * (percentWidth / 100), 0);
+            Height = (int)Math.Round(window.Height * (percentHeight / 100), 0);
 
             //PosX is currently defined in percentage to be responsible... Could be done with some kind of simplified FlexBox
             //PosY doesn't need to be defined by percent, because it doesn't change when you resize your screen
-            PosX = Width * (percentX / 100);
+            PercentX = percentX;
+            PosX = (int)Math.Round(Width * (PercentX / 100), 0);
             PosY = posY;
         }
 
@@ -97,10 +100,13 @@ namespace MsDos
                 offset = 0;
             }
             
-            Height = e.Height;
-            Width = e.Width;
+            Height = (int)Math.Round(e.Height * (PercentHeight / 100));
+            Width = (int)Math.Round(e.Width * (PercentWidth / 100));
             
-            PosX = Width * (PosX / 100);
+            PosX = (int)Math.Round(e.Width * (PercentX / 100), 0);
+            
+            CreateBorder();
+            CreateBody();
         }
 
         public override void CreateBody()

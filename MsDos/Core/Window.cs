@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using MsDos.Components;
 using MsDos.Contracts;
+using MsDos.Data;
 
 namespace MsDos.Core
 {
@@ -62,13 +63,11 @@ namespace MsDos.Core
         {
             Height = Console.WindowHeight;
             Width = Console.WindowWidth;
+            FillBuffers(Width, Height);
+            
+            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
             Console.Clear();
 
-            RerenderWindowBuffers();
-        }
-
-        public void RerenderWindowBuffers()
-        {
             Render();
         }
 
@@ -86,7 +85,6 @@ namespace MsDos.Core
         }
         private void OnResize()
         {
-            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
             IsResizing = true;
             _resizeTimer.Interval = 500;
             _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);

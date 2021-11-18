@@ -11,7 +11,7 @@ namespace MsDos
         
         public override void ConstructView()
         {
-            TableComponent table1 = new TableComponent((int)Math.Floor(window.Width / 2.1), window.Height - 3, 0, 2, @"C:\", window);
+            TableComponent table1 = new TableComponent(50, 100, 0, 2, @"C:\", window);
             table1.CreateBorder();
             table1.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", new List<string>() { "Sus", "Gus", "Pus"}));
             table1.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", new List<string>() {"big size", "huge size", "extremely huge size"}));
@@ -20,7 +20,7 @@ namespace MsDos
             table1.Columns.Add(new TableComponent.ColumnDefinition(-1, "Date", new List<string>() {"Nice date", "Lovely date", "Cool date"}));
             table1.CreateBody();
 
-            window.CreateWindow();
+            window.Start();
         }
         
         public override void OnKeyDown(object sender, ConsoleKey key)

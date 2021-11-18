@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MsDos.Components;
 using MsDos.Core;
+using MsDos.Data;
 
 namespace MsDos.Contracts
 {
