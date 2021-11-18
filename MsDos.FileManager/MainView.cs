@@ -16,7 +16,7 @@ namespace MsDos
             table1.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", new List<string>() { "Sus", "Gus", "Pus"}));
             table1.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", new List<string>() {"big size", "huge size", "extremely huge size"}));
             
-            //-1 fills the rest of the component
+            //-1 fills the rest of the component (Last column was acting stupid because of the rounding...)
             table1.Columns.Add(new TableComponent.ColumnDefinition(-1, "Date", new List<string>() {"Nice date", "Lovely date", "Cool date"}));
             table1.CreateBody();
 
@@ -25,7 +25,6 @@ namespace MsDos
         
         public override void OnKeyDown(object sender, ConsoleKey key)
         {
-            
         }
     }
 }

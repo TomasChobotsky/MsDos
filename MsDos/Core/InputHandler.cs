@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using MsDos.Contracts;
 
 namespace MsDos.Core
@@ -7,17 +8,23 @@ namespace MsDos.Core
     public class InputHandler : IInputHandler
     {
         public event EventHandler<ConsoleKey> KeyDownEvent;
-        
-        public void ListenToInput ()
+
+        public InputHandler()
         {
-            while (true) 
+            ListenToInput();
+        }
+
+        public void ListenToInput()
+        {
+            new Thread(() =>
             {
-                if (Console.KeyAvailable)
+                while (true)
                 {
-                    ConsoleKey input = Console.ReadKey().Key;
+                    ConsoleKey input = Console.ReadKey(true).Key;
                     KeyDownEvent?.Invoke(this, input);
                 }
-            }
+            }).Start();
+           
         }
     }
 }

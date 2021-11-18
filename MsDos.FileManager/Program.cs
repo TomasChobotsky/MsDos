@@ -14,8 +14,6 @@ namespace MsDos
 
             MainView mainView = new MainView();
             mainView.ConstructView();
-
-            Console.ReadKey();
         }
     }
-};
+}
