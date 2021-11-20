@@ -3,5 +3,15 @@ using System.IO;
 
 namespace MsDos.Data
 {
-    public record TableContent(bool IsSelected, string Value) {}
+    public class TableContent
+    {
+        public bool IsSelected { get; set; }
+        public string Value { get; set; }
+
+        public TableContent(bool isSelected, string value)
+        {
+            IsSelected = isSelected;
+            Value = value;
+        }
+    }
 }

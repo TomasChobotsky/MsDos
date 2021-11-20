@@ -61,10 +61,7 @@ namespace MsDos.Core
 
         public void CreateWindow()
         {
-            Height = Console.WindowHeight;
-            Width = Console.WindowWidth;
             FillBuffers(Width, Height);
-            
             WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
             Console.Clear();
 
@@ -77,11 +74,9 @@ namespace MsDos.Core
         {
             Console.CursorVisible = false;
             _resizeTimer.Enabled = false;
-
+            
             if (IsResizing)
-            {
                 CreateWindow();
-            }
         }
         private void OnResize()
         {
@@ -93,12 +88,15 @@ namespace MsDos.Core
 
         public void Render()
         {
+            IsResizing = false;
             for (var y = 0; y < Height - 1; y++)
             {
                 for (var x = 0; x < Width; x++)
                 {
+                    if (IsResizing)
+                        return;
                     Console.SetCursorPosition(x, y);
-
+                    
                     if (Buffer[x, y] != TempBuffer[x, y])
                     {
                         Console.BackgroundColor = Buffer[x, y].BackgroundColor;
@@ -108,8 +106,7 @@ namespace MsDos.Core
                     }
                 }
             }
-
-            IsResizing = false;
+            
             isDrawn = false;
         }
     }

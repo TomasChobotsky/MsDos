@@ -29,9 +29,6 @@ namespace MsDos
             Window.WindowResizedEvent += OnResize;
         }
         
-        /// <summary>
-        /// Currently only as a implementation... Could be utilized as a more optimized method of writing to the screen
-        /// </summary>
         public abstract void Render();
         public abstract void CreateBody();
 

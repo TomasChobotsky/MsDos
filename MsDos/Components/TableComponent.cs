@@ -23,17 +23,19 @@ namespace MsDos
                 Portion = portion;
                 Header = header;
                 Content = content;
-                DeserializedContent = new List<TableContent>();
 
                 DeserializeContent();
             }
 
-            private void DeserializeContent()
+            public void DeserializeContent(int selectedIndex = 0)
             {
+                DeserializedContent = new List<TableContent>();
                 foreach (var content in Content)
                 {
                     DeserializedContent.Add(new TableContent(false, content));
                 }
+
+                DeserializedContent[selectedIndex].IsSelected = true;
             }
         }
         
@@ -59,7 +61,7 @@ namespace MsDos
         }
 
         public void ChangeFocusedDirectory (int sum)
-        {
+        { 
             SelectedIndex += sum;
             mouseY += sum;
 
@@ -88,6 +90,8 @@ namespace MsDos
                 mouseY = Height - 5;
                 offset = Columns[0].DeserializedContent.Count() - (Height - 4);
             }
+            
+            Render();
         }
         
         
@@ -114,6 +118,7 @@ namespace MsDos
             int columnStartX = 0;
             foreach (var column in Columns)
             {
+                column.DeserializeContent(SelectedIndex);
                 int columnWidth = 0;
                 if (column.Portion == -1)
                 {
@@ -135,16 +140,19 @@ namespace MsDos
                 int y = 2;
                 foreach (var content in column.DeserializedContent)
                 {
-                    
                     if (y > Height - 3)
                     {
                         break;
                     }
-                    
+
                     Window.Buffer[columnWidth + columnStartX, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
 
                     ConsoleColor bgColor = ConsoleColor.Blue;
                     ConsoleColor fgColor = ConsoleColor.White;
+                    if (content.IsSelected)
+                    {
+                        bgColor = ConsoleColor.Cyan;
+                    }
 
                     for (int x = columnStartX; x < columnWidth + columnStartX - 1; x++)
                     {
@@ -162,28 +170,22 @@ namespace MsDos
         
         public override void Render()
         {
+            CreateBorder();
+            CreateBody();
+            
             for (int y = 0; y < Height - 1; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {
                     Console.SetCursorPosition(x, y);
                     
-                    if (Window.Buffer[x, y].Character != Window.TempBuffer[x, y].Character)
-                        Console.Write(Window.Buffer[x, y].Character);
-                    
-                    if (Window.Buffer[x, y].BackgroundColor != Window.TempBuffer[x, y].BackgroundColor)
+                    if (Window.Buffer[x, y] != Window.TempBuffer[x, y])
+                    {
                         Console.BackgroundColor = Window.Buffer[x, y].BackgroundColor;
-                    
-                    if (Window.Buffer[x, y].ForegroundColor != Window.TempBuffer[x, y].ForegroundColor)
                         Console.ForegroundColor = Window.Buffer[x, y].ForegroundColor;
-                }
-            }
-
-            for (int y = 0; y < Height - 1; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    Window.TempBuffer[x, y] = Window.Buffer[x, y];
+                        Console.Write(Window.Buffer[x, y].Character);
+                        Window.TempBuffer[x, y] = Window.Buffer[x, y];
+                    }
                 }
             }
         }
