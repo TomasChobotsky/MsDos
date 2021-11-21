@@ -39,9 +39,9 @@ namespace MsDos
         /// </summary>
         public void CreateBorder()
         {
-            int textPosition = Width / 2;
+            int textPosition = Width / 2 + PosX;
             string text = $" {Header} ";
-            for (int x = 0; x < Width; x++)
+            for (int x = PosX; x < Width + PosX; x++)
             {
                 if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2 + 1)
                 {
@@ -60,8 +60,8 @@ namespace MsDos
 
             for (int v = 1; v < Height - 2; v++)
             {
-                Window.Buffer[0, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
-                Window.Buffer[Width - 1, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                Window.Buffer[PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                Window.Buffer[(Width - 1) + PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
             }
         }
     }

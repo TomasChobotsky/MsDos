@@ -115,7 +115,7 @@ namespace MsDos
 
         public override void CreateBody()
         {
-            int columnStartX = 0;
+            int columnStartX = PosX;
             foreach (var column in Columns)
             {
                 column.DeserializeContent(SelectedIndex);
