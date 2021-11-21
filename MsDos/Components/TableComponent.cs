@@ -15,8 +15,7 @@ namespace MsDos
             public int Portion;
             public string Header;
             public List<TableContent> DeserializedContent;
-            
-            private List<string> Content;
+            public List<string> Content { get; set; }
 
             public ColumnDefinition(int portion, string header, List<string> content)
             {
@@ -91,6 +90,7 @@ namespace MsDos
                 offset = Columns[0].DeserializedContent.Count() - (Height - 4);
             }
             
+            EmptyComponent();
             Render();
         }
         
@@ -122,7 +122,7 @@ namespace MsDos
                 int columnWidth = 0;
                 if (column.Portion == -1)
                 {
-                    columnWidth = Width - columnStartX - 1;
+                    columnWidth = (Width + PosX) - columnStartX - 1;
                 }
                 else
                 {
@@ -136,9 +136,11 @@ namespace MsDos
                         ConsoleColor.Blue, ConsoleColor.White);
                 }
                 Window.Buffer[columnWidth + columnStartX, 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                
+                var offsetContent = column.DeserializedContent.Skip(offset).Take(column.DeserializedContent.Count - offset);
 
                 int y = 2;
-                foreach (var content in column.DeserializedContent)
+                foreach (var content in offsetContent)
                 {
                     if (y > Height - 3)
                     {
@@ -175,7 +177,7 @@ namespace MsDos
             
             for (int y = 0; y < Height - 1; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = PosX; x < Width + PosX; x++)
                 {
                     Console.SetCursorPosition(x, y);
                     

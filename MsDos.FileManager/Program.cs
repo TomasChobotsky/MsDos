@@ -10,7 +10,6 @@ namespace MsDos
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
-            Console.BufferHeight = Console.WindowHeight;
 
             MainView mainView = new MainView();
             mainView.ConstructView();

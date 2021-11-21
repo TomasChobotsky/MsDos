@@ -12,6 +12,31 @@ namespace MsDos.Components
     public class ComponentControl
     {
         public List<Component> Components { get; set; } = new List<Component>();
-        public int SelectedComponent { get; set; } = 0;
+
+        public int SelectedComponentIndex
+        {
+            get { return selectedComponentIndex;}
+            set
+            {
+                selectedComponentIndex = value;
+                
+                if (Components.Count > 0)
+                    SelectedComponent = Components[SelectedComponentIndex];
+            }
+            
+        }
+        
+        public Component SelectedComponent { get; set; }
+        
+        private int selectedComponentIndex;
+
+        public void RecreateComponents()
+        {
+            foreach (var component in Components)
+            {
+                component.EmptyComponent();
+                component.Render();
+            }
+        }
     }
 }

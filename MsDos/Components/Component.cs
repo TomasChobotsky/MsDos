@@ -28,6 +28,8 @@ namespace MsDos
             Window.ComponentControl.Components.Add(this);
             Window.WindowResizedEvent += OnResize;
         }
+
+        public Component() {}
         
         public abstract void Render();
         public abstract void CreateBody();
@@ -43,7 +45,7 @@ namespace MsDos
             string text = $" {Header} ";
             for (int x = PosX; x < Width + PosX; x++)
             {
-                if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2 + 1)
+                if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2)
                 {
                     if (IsSelected)
                         Window.Buffer[x, 0] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
@@ -62,6 +64,17 @@ namespace MsDos
             {
                 Window.Buffer[PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                 Window.Buffer[(Width - 1) + PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+            }
+        }
+
+        public void EmptyComponent()
+        {
+            for (int j = PosX; j < PosX + Width; j++)
+            {
+                for (int i = 0; i < Height; i++)
+                {
+                    Window.Buffer[j, i] = new Pixel(' ', ConsoleColor.Blue, ConsoleColor.White);
+                }
             }
         }
     }
