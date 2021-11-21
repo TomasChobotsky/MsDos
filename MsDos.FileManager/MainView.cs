@@ -85,7 +85,7 @@ namespace MsDos
             {
                 var selected = (TableComponent)controller.SelectedComponent;
 
-                if (selected.Header == drive1 && selected.Header == drive2)
+                if (selected.Header == drive1 || selected.Header == drive2)
                     return;
 
                 var splittedHeader = selected.Header.Split("\\");
@@ -101,6 +101,8 @@ namespace MsDos
             fileManager.ReadDirectories(selected.Header);
 
             selected.SelectedIndex = 0;
+            selected.Offset = 0;
+            selected.MouseY = 0;
                     
             selected.Columns[0].Content = fileManager.Directories.Select(t => t.Name).ToList();
             selected.Columns[1].Content = fileManager.Directories.Select(t => t.Size).ToList();

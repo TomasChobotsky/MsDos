@@ -41,8 +41,8 @@ namespace MsDos
         public List<ColumnDefinition> Columns { get; set; } = new List<ColumnDefinition>();
         public int SelectedIndex { get; set; } = 0;
 
-        private int offset = 0;
-        private int mouseY = 0;
+        public int Offset { get; set; } = 0;
+        public int MouseY { get; set; } = 0;
 
         public TableComponent(double percentWidth, double percentHeight, double percentX, int posY, string header, IWindow window) : base(
             header, window)
@@ -62,32 +62,32 @@ namespace MsDos
         public void ChangeFocusedDirectory (int sum)
         { 
             SelectedIndex += sum;
-            mouseY += sum;
+            MouseY += sum;
 
-            if (mouseY == Height - 4)
+            if (MouseY == Height - 4)
             {
-                mouseY -= sum;
+                MouseY -= sum;
                 
-                if (Columns[0].DeserializedContent.Count() - offset > Height - 4)
-                    offset++;
+                if (Columns[0].DeserializedContent.Count() - Offset > Height - 4)
+                    Offset++;
             }
-            if (mouseY == -1)
+            if (MouseY == -1)
             {
-                mouseY -= sum;
-                offset--;
+                MouseY -= sum;
+                Offset--;
             }
             
             if (SelectedIndex == Columns[0].DeserializedContent.Count())
             {
                 SelectedIndex = 0;
-                mouseY = 0;
-                offset = 0;
+                MouseY = 0;
+                Offset = 0;
             }
             else if (SelectedIndex < 0)
             {
                 SelectedIndex = Columns[0].DeserializedContent.Count() - 1;
-                mouseY = Height - 5;
-                offset = Columns[0].DeserializedContent.Count() - (Height - 4);
+                MouseY = Height - 5;
+                Offset = Columns[0].DeserializedContent.Count() - (Height - 4);
             }
             
             EmptyComponent();
@@ -97,11 +97,11 @@ namespace MsDos
         
         public override void OnResize(object sender, WindowResizedEventArgs e)
         {
-            if (mouseY > Window.Height)
+            if (MouseY > Window.Height)
             {
                 SelectedIndex = 0;
-                mouseY = 0;
-                offset = 0;
+                MouseY = 0;
+                Offset = 0;
             }
             
             Height = (int)Math.Round(e.Height * (PercentHeight / 100));
@@ -137,7 +137,7 @@ namespace MsDos
                 }
                 Window.Buffer[columnWidth + columnStartX, 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                 
-                var offsetContent = column.DeserializedContent.Skip(offset).Take(column.DeserializedContent.Count - offset);
+                var offsetContent = column.DeserializedContent.Skip(Offset).Take(column.DeserializedContent.Count - Offset);
 
                 int y = 2;
                 foreach (var content in offsetContent)
