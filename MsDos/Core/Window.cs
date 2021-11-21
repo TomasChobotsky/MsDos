@@ -4,25 +4,32 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using MsDos.Components;
+using MsDos.Contracts;
+using MsDos.Data;
 
-namespace MsDos
+namespace MsDos.Core
 {
-    public static class Window
+    public class Window : IWindow
     {
-        public static bool IsResizing = false;
-        public static int SelectedWindow = 0;
-        public static int Width = Console.WindowWidth;
-        public static int Height = Console.WindowHeight;
-        public static Pixel[,] Buffer { get; private set; }
-        public static Pixel[,] TempBuffer { get; private set; }
+        public bool IsResizing = false;
+        public int SelectedWindow = 0;
+        public int Width { get; set; } = Console.WindowWidth;
+        public int Height { get; set; } = Console.WindowHeight;
+        public Pixel[,] Buffer { get; set; }
+        public Pixel[,] TempBuffer { get; set; }
+        public ComponentControl ComponentControl { get; set; } = new ComponentControl();
         
         private static bool isDrawn = false;
 
-        public delegate void ResizeEvent(int width, int height);
+        public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
 
-        public static event ResizeEvent WindowResizedEvent;
+        public Window()
+        {
+            FillBuffers(Width, Height);
+        }
 
-        public static void Start()
+        public void Start()
         {
             CreateWindow();
             while(true)
@@ -38,7 +45,7 @@ namespace MsDos
             }
         }
         
-        private static void FillBuffers(int width, int height)
+        private void FillBuffers(int width, int height)
         {
             Buffer = new Pixel[width, height];
             TempBuffer = new Pixel[width, height];
@@ -52,43 +59,34 @@ namespace MsDos
             }
         }
 
-        private static void CreateWindow()
+        public void CreateWindow()
         {
-            Height = Console.WindowHeight;
-            Width = Console.WindowWidth;
-            Console.Clear();
             FillBuffers(Width, Height);
+            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
+            Console.Clear();
 
-            RerenderWindowBuffers();
-        }
-
-        public static void RerenderWindowBuffers()
-        {
             Render();
         }
 
-        private static System.Timers.Timer _resizeTimer = new();
+        private System.Timers.Timer _resizeTimer = new();
 
-        static void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
+        void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
         {
             Console.CursorVisible = false;
             _resizeTimer.Enabled = false;
-
+            
             if (IsResizing)
-            {
                 CreateWindow();
-            }
         }
-        private static void OnResize()
+        private void OnResize()
         {
-            WindowResizedEvent?.Invoke(Width, Height);
             IsResizing = true;
             _resizeTimer.Interval = 500;
             _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);
             _resizeTimer.Enabled = true;
         }
 
-        public static void Render()
+        public void Render()
         {
             IsResizing = false;
             for (var y = 0; y < Height - 1; y++)
@@ -96,13 +94,9 @@ namespace MsDos
                 for (var x = 0; x < Width; x++)
                 {
                     if (IsResizing)
-                    {
-                        IsResizing = false;
                         return;
-                    }
-                    
                     Console.SetCursorPosition(x, y);
-
+                    
                     if (Buffer[x, y] != TempBuffer[x, y])
                     {
                         Console.BackgroundColor = Buffer[x, y].BackgroundColor;
@@ -112,8 +106,7 @@ namespace MsDos
                     }
                 }
             }
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.White;
+            
             isDrawn = false;
         }
     }
