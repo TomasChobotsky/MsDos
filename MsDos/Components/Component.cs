@@ -31,7 +31,6 @@ namespace MsDos
 
         public Component() {}
         
-        public abstract void Render();
         public abstract void CreateBody();
 
         public virtual void OnResize(object sender, WindowResizedEventArgs e) { }

@@ -34,7 +34,8 @@ namespace MsDos
                     DeserializedContent.Add(new TableContent(false, content));
                 }
 
-                DeserializedContent[selectedIndex].IsSelected = true;
+                if(DeserializedContent.Count > 0)
+                    DeserializedContent[selectedIndex].IsSelected = true;
             }
         }
         
@@ -59,7 +60,7 @@ namespace MsDos
             PosY = posY;
         }
 
-        public void ChangeFocusedDirectory (int sum)
+        public void ChangeFocusedContent (int sum)
         { 
             SelectedIndex += sum;
             MouseY += sum;
@@ -91,7 +92,9 @@ namespace MsDos
             }
             
             EmptyComponent();
-            Render();
+            CreateBody();
+            CreateBorder();
+            Window.Render();
         }
         
         
@@ -132,6 +135,8 @@ namespace MsDos
 
                 for (int x = (columnMiddle - column.Header.Length / 2) + columnStartX; x < (columnMiddle + column.Header.Length / 2) + columnStartX; x++)
                 {
+                    if (x < 0)
+                        continue;
                     Window.Buffer[x, 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
                         ConsoleColor.Blue, ConsoleColor.White);
                 }
@@ -167,28 +172,6 @@ namespace MsDos
                 }
 
                 columnStartX = columnWidth + columnStartX;
-            }
-        }
-        
-        public override void Render()
-        {
-            CreateBorder();
-            CreateBody();
-            
-            for (int y = 0; y < Height - 1; y++)
-            {
-                for (int x = PosX; x < Width + PosX; x++)
-                {
-                    Console.SetCursorPosition(x, y);
-                    
-                    if (Window.Buffer[x, y] != Window.TempBuffer[x, y])
-                    {
-                        Console.BackgroundColor = Window.Buffer[x, y].BackgroundColor;
-                        Console.ForegroundColor = Window.Buffer[x, y].ForegroundColor;
-                        Console.Write(Window.Buffer[x, y].Character);
-                        Window.TempBuffer[x, y] = Window.Buffer[x, y];
-                    }
-                }
             }
         }
     }

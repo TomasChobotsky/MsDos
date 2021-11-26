@@ -18,6 +18,6 @@ namespace MsDos
 
         public abstract void ConstructView();
 
-        public virtual void OnKeyDown(object sender, ConsoleKey key) { }
+        public virtual void OnKeyDown(object sender, ConsoleKey key) {}
     }
 }

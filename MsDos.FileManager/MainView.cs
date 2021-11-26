@@ -12,7 +12,7 @@ namespace MsDos
         private IWindow window;
         private TableComponent table1;
         private TableComponent table2;
-        private string drive1 = "C:\\";
+        private string drive1 = "X:\\";
         private string drive2 = "D:\\";
         private ComponentControl controller = new ComponentControl();
         private FileManager fileManager = new FileManager();
@@ -49,10 +49,10 @@ namespace MsDos
         public override void OnKeyDown(object sender, ConsoleKey key)
         {
             if (key == ConsoleKey.UpArrow)
-                ((TableComponent)controller.SelectedComponent).ChangeFocusedDirectory(-1);
+                ((TableComponent)controller.SelectedComponent).ChangeFocusedContent(-1);
 
             if (key == ConsoleKey.DownArrow)
-                ((TableComponent)controller.SelectedComponent).ChangeFocusedDirectory(1);
+                ((TableComponent)controller.SelectedComponent).ChangeFocusedContent(1);
             
             if (key == ConsoleKey.Tab)
             {
@@ -68,17 +68,20 @@ namespace MsDos
 
             if (key == ConsoleKey.Spacebar)
             {
-                var selected = (TableComponent)controller.SelectedComponent;
+                try
+                {
+                    var selected = (TableComponent)controller.SelectedComponent;
+                    fileManager.ReadDirectories(selected.Header);
 
-                var dirFile = fileManager.Directories.FirstOrDefault(t =>
-                    t.Name == selected.Columns[0].Content[selected.SelectedIndex]);
-                if (dirFile != null && dirFile.IsFile)
-                    return;
-
-                selected.Header +=
-                    $"{selected.Columns[0].Content[selected.SelectedIndex]}\\";
+                    selected.Header +=
+                        $"{selected.Columns[0].Content[selected.SelectedIndex]}\\";
                 
-                RegenerateColumns(selected);
+                    RegenerateColumns(selected);
+                }
+                catch
+                {
+                    return;
+                }
             }
 
             if (key == ConsoleKey.Backspace)

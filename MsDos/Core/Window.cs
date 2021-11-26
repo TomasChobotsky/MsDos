@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -19,8 +21,11 @@ namespace MsDos.Core
         public Pixel[,] Buffer { get; set; }
         public Pixel[,] TempBuffer { get; set; }
         public ComponentControl ComponentControl { get; set; } = new ComponentControl();
-        
-        private static bool isDrawn = false;
+
+        private bool isDrawn = false;
+        private string outputString = "";
+        private ConsoleColor currentBGColor;
+        private ConsoleColor currentFGColor;
 
         public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
 
@@ -31,20 +36,29 @@ namespace MsDos.Core
 
         public void Start()
         {
+            Console.BufferHeight = Console.WindowHeight;
             CreateWindow();
-            while(true)
+            while (true)
             {
                 if (Height != Console.WindowHeight || Width != Console.WindowWidth)
                 {
                     //Necessary to be here to stop the statement above from being true IMMEDIATELY
                     Height = Console.WindowHeight;
                     Width = Console.WindowWidth;
+                    try
+                    {
+                        Console.BufferHeight = Console.WindowHeight;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
 
-                    OnResize();
+                    CreateWindow();
                 }
             }
         }
-        
+
         private void FillBuffers(int width, int height)
         {
             Buffer = new Pixel[width, height];
@@ -62,8 +76,7 @@ namespace MsDos.Core
         public void CreateWindow()
         {
             FillBuffers(Width, Height);
-            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() {Width = Width, Height = Height});
-            Console.Clear();
+            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() { Width = Width, Height = Height });
 
             Render();
         }
@@ -74,10 +87,14 @@ namespace MsDos.Core
         {
             Console.CursorVisible = false;
             _resizeTimer.Enabled = false;
-            
+
             if (IsResizing)
+            {
+                Console.Clear();
                 CreateWindow();
+            }
         }
+
         private void OnResize()
         {
             IsResizing = true;
@@ -95,19 +112,28 @@ namespace MsDos.Core
                 {
                     if (IsResizing)
                         return;
-                    Console.SetCursorPosition(x, y);
-                    
-                    if (Buffer[x, y] != TempBuffer[x, y])
+
+                    if (currentBGColor != Buffer[x, y].BackgroundColor || currentFGColor != Buffer[x, y].ForegroundColor)
                     {
-                        Console.BackgroundColor = Buffer[x, y].BackgroundColor;
-                        Console.ForegroundColor = Buffer[x, y].ForegroundColor;
-                        Console.Write(Buffer[x, y].Character);
-                        TempBuffer[x, y] = Buffer[x, y];
+                        WriteOutputString();
+                        currentBGColor = Buffer[x, y].BackgroundColor;
+                        currentFGColor = Buffer[x, y].ForegroundColor;
                     }
+
+                    outputString += Buffer[x, y].Character;
                 }
+                WriteOutputString();
             }
-            
+            Console.SetCursorPosition(0, 0);
             isDrawn = false;
+        }
+
+        private void WriteOutputString()
+        {
+            Console.BackgroundColor = currentBGColor;
+            Console.ForegroundColor = currentFGColor;
+            Console.Write(outputString);
+            outputString = "";
         }
     }
 }

@@ -35,8 +35,10 @@ namespace MsDos.Components
             foreach (var component in Components)
             {
                 component.EmptyComponent();
-                component.Render();
+                component.CreateBody();
+                component.CreateBorder();
             }
+            Components[0].Window.CreateWindow();
         }
     }
 }
