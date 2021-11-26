@@ -137,14 +137,14 @@ namespace MsDos
                 {
                     if (x < 0)
                         continue;
-                    Window.Buffer[x, 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
+                    Window.Buffer[x, PosY + 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
                         ConsoleColor.Blue, ConsoleColor.White);
                 }
-                Window.Buffer[columnWidth + columnStartX, 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                Window.Buffer[columnWidth + columnStartX, PosY + 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                 
                 var offsetContent = column.DeserializedContent.Skip(Offset).Take(column.DeserializedContent.Count - Offset);
 
-                int y = 2;
+                int y = PosY + 2;
                 foreach (var content in offsetContent)
                 {
                     if (y > Height - 3)

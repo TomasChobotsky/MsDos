@@ -10,6 +10,8 @@ namespace MsDos
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
+            Console.BackgroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.White;
 
             MainView mainView = new MainView();
             mainView.ConstructView();

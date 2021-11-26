@@ -83,26 +83,6 @@ namespace MsDos.Core
 
         private System.Timers.Timer _resizeTimer = new();
 
-        void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
-        {
-            Console.CursorVisible = false;
-            _resizeTimer.Enabled = false;
-
-            if (IsResizing)
-            {
-                Console.Clear();
-                CreateWindow();
-            }
-        }
-
-        private void OnResize()
-        {
-            IsResizing = true;
-            _resizeTimer.Interval = 500;
-            _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);
-            _resizeTimer.Enabled = true;
-        }
-
         public void Render()
         {
             IsResizing = false;

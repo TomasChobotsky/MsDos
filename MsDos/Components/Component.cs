@@ -47,19 +47,19 @@ namespace MsDos
                 if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2)
                 {
                     if (IsSelected)
-                        Window.Buffer[x, 0] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
+                        Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
                             ConsoleColor.Black);
                     else
-                        Window.Buffer[x, 0] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.Gray,
+                        Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.Gray,
                             ConsoleColor.Black);
                 }
                 else
-                    Window.Buffer[x, 0] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
+                    Window.Buffer[x, PosY] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
 
                 Window.Buffer[x, Height - 2] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
             }
 
-            for (int v = 1; v < Height - 2; v++)
+            for (int v = PosY + 1; v < Height - 2; v++)
             {
                 Window.Buffer[PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                 Window.Buffer[(Width - 1) + PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);

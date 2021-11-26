@@ -20,7 +20,7 @@ namespace MsDos
         public override void ConstructView()
         {
             window = new Window();
-            table1 = new TableComponent(48, 100, 0, 2, drive1, window);
+            table1 = new TableComponent(48, 100, 1, 1, drive1, window);
             fileManager.ReadDirectories(drive1);
             table1.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", fileManager.Directories.Select(t => t.Name).ToList()));
             table1.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", fileManager.Directories.Select(t => t.Size).ToList()));
@@ -28,7 +28,7 @@ namespace MsDos
             table1.Columns.Add(new TableComponent.ColumnDefinition(-1, "Date", fileManager.Directories.Select(t => t.Date).ToList()));
             table1.IsSelected = true;
             
-            table2 = new TableComponent(48, 100, 51, 2, drive2, window);
+            table2 = new TableComponent(48, 100, 51, 1, drive2, window);
             fileManager.ReadDirectories(drive2);
             table2.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", fileManager.Directories.Select(t => t.Name).ToList()));
             table2.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", fileManager.Directories.Select(t => t.Size).ToList()));
@@ -68,9 +68,10 @@ namespace MsDos
 
             if (key == ConsoleKey.Spacebar)
             {
+                var selected = (TableComponent)controller.SelectedComponent;
+                var tempHeader = selected.Header;
                 try
                 {
-                    var selected = (TableComponent)controller.SelectedComponent;
                     fileManager.ReadDirectories(selected.Header);
 
                     selected.Header +=
@@ -80,6 +81,7 @@ namespace MsDos
                 }
                 catch
                 {
+                    selected.Header = tempHeader;
                     return;
                 }
             }
