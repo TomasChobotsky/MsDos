@@ -18,6 +18,8 @@ namespace MsDos.Contracts
         public ComponentControl ComponentControl { get; set; }
 
         void Start();
+        int GetWidthByPortion(double portion);
+        int GetHeightByPortion(double portion);
         void Render();
         void CreateWindow();
 

@@ -1,0 +1,120 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\TextEditor\\TextEditor.csproj": {}
+  },
+  "projects": {
+    "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj",
+        "projectName": "MsDos",
+        "projectPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj",
+        "packagesPath": "C:\\Users\\tocho\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\tocho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\TextEditor\\TextEditor.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\TextEditor\\TextEditor.csproj",
+        "projectName": "TextEditor",
+        "projectPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\TextEditor\\TextEditor.csproj",
+        "packagesPath": "C:\\Users\\tocho\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\TextEditor\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\tocho\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj": {
+                "projectPath": "D:\\Programming\\C#\\Projects\\Personal\\Else\\MsDos\\MsDos\\MsDos.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

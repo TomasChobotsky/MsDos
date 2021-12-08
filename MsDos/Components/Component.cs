@@ -19,11 +19,17 @@ namespace MsDos
         
         public string Header { get; set; }
         public bool IsSelected { get; set; } = false;
+        public bool IsActive { get; set; } = true;
         public IWindow Window { get; }
 
-        public Component(string header,IWindow window)
+        public ConsoleColor BgColor { get; set; }
+        public ConsoleColor FgColor { get; set; }
+
+        public Component(string header, ConsoleColor bgColor, ConsoleColor fgColor, IWindow window)
         {
             Header = header;
+            BgColor = bgColor;
+            FgColor = fgColor;
             Window = window;
             Window.ComponentControl.Components.Add(this);
             Window.WindowResizedEvent += OnResize;
@@ -40,29 +46,32 @@ namespace MsDos
         /// </summary>
         public void CreateBorder()
         {
-            int textPosition = Width / 2 + PosX;
-            string text = $" {Header} ";
-            for (int x = PosX; x < Width + PosX; x++)
+            if (IsActive)
             {
-                if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2)
+                int textPosition = Width / 2 + PosX;
+                string text = $" {Header} ";
+                for (int x = PosX; x < Width + PosX; x++)
                 {
-                    if (IsSelected)
-                        Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
-                            ConsoleColor.Black);
+                    if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2)
+                    {
+                        if (IsSelected)
+                            Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
+                                ConsoleColor.Black);
+                        else
+                            Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.Gray,
+                                ConsoleColor.Black);
+                    }
                     else
-                        Window.Buffer[x, PosY] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.Gray,
-                            ConsoleColor.Black);
+                        Window.Buffer[x, PosY] = new Pixel('─', BgColor, FgColor);
+
+                    Window.Buffer[x, Height - 2] = new Pixel('─', BgColor, FgColor);
                 }
-                else
-                    Window.Buffer[x, PosY] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
 
-                Window.Buffer[x, Height - 2] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
-            }
-
-            for (int v = PosY + 1; v < Height - 2; v++)
-            {
-                Window.Buffer[PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
-                Window.Buffer[(Width - 1) + PosX, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                for (int v = PosY + 1; v < Height - 2; v++)
+                {
+                    Window.Buffer[PosX, v] = new Pixel('│', BgColor, FgColor);
+                    Window.Buffer[(Width - 1) + PosX, v] = new Pixel('│', BgColor, FgColor);
+                }
             }
         }
 
@@ -72,7 +81,7 @@ namespace MsDos
             {
                 for (int i = 0; i < Height; i++)
                 {
-                    Window.Buffer[j, i] = new Pixel(' ', ConsoleColor.Blue, ConsoleColor.White);
+                    Window.Buffer[j, i] = new Pixel(' ', BgColor, FgColor);
                 }
             }
         }

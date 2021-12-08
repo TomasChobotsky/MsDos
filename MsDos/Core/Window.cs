@@ -59,6 +59,16 @@ namespace MsDos.Core
             }
         }
 
+        public int GetWidthByPortion(double portion)
+        {
+            return (int)Math.Round(Width * (portion / 100), 0);
+        }
+
+        public int GetHeightByPortion(double portion)
+        {
+            return (int)Math.Round(Height * (portion / 100), 0);
+        }
+
         private void FillBuffers(int width, int height)
         {
             Buffer = new Pixel[width, height];

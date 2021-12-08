@@ -12,6 +12,7 @@ namespace MsDos
         private IWindow window;
         private TableComponent table1;
         private TableComponent table2;
+        private DialogComponent noAccessDialog;
         private string drive1 = "X:\\";
         private string drive2 = "D:\\";
         private ComponentControl controller = new ComponentControl();
@@ -20,7 +21,7 @@ namespace MsDos
         public override void ConstructView()
         {
             window = new Window();
-            table1 = new TableComponent(48, 100, 1, 1, drive1, window);
+            table1 = new TableComponent(48, 100, 1, 1, drive1, ConsoleColor.Blue, ConsoleColor.White, window);
             fileManager.ReadDirectories(drive1);
             table1.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", fileManager.Directories.Select(t => t.Name).ToList()));
             table1.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", fileManager.Directories.Select(t => t.Size).ToList()));
@@ -28,11 +29,14 @@ namespace MsDos
             table1.Columns.Add(new TableComponent.ColumnDefinition(-1, "Date", fileManager.Directories.Select(t => t.Date).ToList()));
             table1.IsSelected = true;
             
-            table2 = new TableComponent(48, 100, 51, 1, drive2, window);
+            table2 = new TableComponent(48, 100, 51, 1, drive2, ConsoleColor.Blue, ConsoleColor.White, window);
             fileManager.ReadDirectories(drive2);
             table2.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", fileManager.Directories.Select(t => t.Name).ToList()));
             table2.Columns.Add(new TableComponent.ColumnDefinition(20, "Size", fileManager.Directories.Select(t => t.Size).ToList()));
             table2.Columns.Add(new TableComponent.ColumnDefinition(-1, "Date", fileManager.Directories.Select(t => t.Date).ToList()));
+
+            noAccessDialog = new DialogComponent(48, 100, 1, 1, "No Access", ConsoleColor.Blue, ConsoleColor.White, window);
+            noAccessDialog.IsActive = false;
             
             table1.CreateBorder();
             table1.CreateBody();
@@ -81,6 +85,11 @@ namespace MsDos
                 }
                 catch
                 {
+                    noAccessDialog.IsActive = true;
+                    noAccessDialog.EmptyComponent();
+                    noAccessDialog.CreateBody();
+                    noAccessDialog.CreateBorder();
+                    window.Render();
                     selected.Header = tempHeader;
                     return;
                 }

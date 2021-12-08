@@ -45,13 +45,13 @@ namespace MsDos
         public int Offset { get; set; } = 0;
         public int MouseY { get; set; } = 0;
 
-        public TableComponent(double percentWidth, double percentHeight, double percentX, int posY, string header, IWindow window) : base(
-            header, window)
+        public TableComponent(double percentWidth, double percentHeight, double percentX, int posY, string header, 
+            ConsoleColor backgroundColor, ConsoleColor foregroundColor, IWindow window) : base(header, backgroundColor, foregroundColor, window)
         {
             PercentWidth = percentWidth;
             PercentHeight = percentHeight;
-            Width = (int)Math.Round(window.Width * (percentWidth / 100), 0);
-            Height = (int)Math.Round(window.Height * (percentHeight / 100), 0);
+            Width = window.GetWidthByPortion(percentWidth);
+            Height = window.GetHeightByPortion(percentHeight);
 
             //PosX is currently defined in percentage to be responsible... Could be done with some kind of simplified FlexBox
             //PosY doesn't need to be defined by percent, because it doesn't change when you resize your screen
@@ -65,11 +65,11 @@ namespace MsDos
             SelectedIndex += sum;
             MouseY += sum;
 
-            if (MouseY == Height - 4)
+            if (MouseY == Height - 5)
             {
                 MouseY -= sum;
                 
-                if (Columns[0].DeserializedContent.Count() - Offset > Height - 4)
+                if (Columns[0].DeserializedContent.Count() - Offset > Height - 5)
                     Offset++;
             }
             if (MouseY == -1)
@@ -88,7 +88,7 @@ namespace MsDos
             {
                 SelectedIndex = Columns[0].DeserializedContent.Count() - 1;
                 MouseY = Height - 5;
-                Offset = Columns[0].DeserializedContent.Count() - (Height - 4);
+                Offset = Columns[0].DeserializedContent.Count() - (Height - 5);
             }
             
             EmptyComponent();
@@ -138,9 +138,9 @@ namespace MsDos
                     if (x < 0)
                         continue;
                     Window.Buffer[x, PosY + 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
-                        ConsoleColor.Blue, ConsoleColor.White);
+                        BgColor, FgColor);
                 }
-                Window.Buffer[columnWidth + columnStartX, PosY + 1] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                Window.Buffer[columnWidth + columnStartX, PosY + 1] = new Pixel('│', BgColor, FgColor);
                 
                 var offsetContent = column.DeserializedContent.Skip(Offset).Take(column.DeserializedContent.Count - Offset);
 
@@ -152,10 +152,10 @@ namespace MsDos
                         break;
                     }
 
-                    Window.Buffer[columnWidth + columnStartX, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
+                    Window.Buffer[columnWidth + columnStartX, y] = new Pixel('│', BgColor, FgColor);
 
-                    ConsoleColor bgColor = ConsoleColor.Blue;
-                    ConsoleColor fgColor = ConsoleColor.White;
+                    var bgColor = BgColor;
+                    
                     if (content.IsSelected)
                     {
                         bgColor = ConsoleColor.Cyan;
@@ -165,7 +165,7 @@ namespace MsDos
                     {
                         if (x - columnStartX > content.Value.Length - 1)
                             break;
-                        Window.Buffer[x + 1, y] = new Pixel(content.Value[x - columnStartX], bgColor, fgColor);
+                        Window.Buffer[x + 1, y] = new Pixel(content.Value[x - columnStartX], bgColor, FgColor);
                     }
 
                     y++;
