@@ -12,6 +12,7 @@ namespace MsDos
         private IWindow window;
         private TableComponent table1;
         private TableComponent table2;
+        private Layout layout;
         private DialogComponent noAccessDialog;
         private string drive1 = "X:\\";
         private string drive2 = "D:\\";
@@ -21,6 +22,9 @@ namespace MsDos
         public override void ConstructView()
         {
             window = new Window();
+            layout = new Layout(100, 3, ConsoleColor.White, ConsoleColor.Black, window);
+            layout.AddTextBox("FILE", 20, 0, ConsoleColor.Gray, ConsoleColor.White);
+            layout.AddTextBox("EDIT", 20, 25, ConsoleColor.Gray, ConsoleColor.White);
             table1 = new TableComponent(48, 100, 1, 1, drive1, ConsoleColor.Blue, ConsoleColor.White, window);
             fileManager.ReadDirectories(drive1);
             table1.Columns.Add(new TableComponent.ColumnDefinition(40, "Name", fileManager.Directories.Select(t => t.Name).ToList()));
@@ -42,6 +46,7 @@ namespace MsDos
             table1.CreateBody();
             table2.CreateBorder();
             table2.CreateBody();
+            layout.CreateBody();
 
             controller.Components.Add(table1);
             controller.Components.Add(table2);
