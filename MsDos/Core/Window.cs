@@ -1,44 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using MsDos.Components;
+using MsDos.Contracts;
+using MsDos.Data;
 
-namespace MsDos
+namespace MsDos.Core
 {
-    public static class Window
+    public class Window : IWindow
     {
-        public static bool IsResizing = false;
-        public static int SelectedWindow = 0;
-        public static int Width = Console.WindowWidth;
-        public static int Height = Console.WindowHeight;
-        public static Pixel[,] Buffer { get; private set; }
-        public static Pixel[,] TempBuffer { get; private set; }
-        
-        private static bool isDrawn = false;
+        public bool IsResizing = false;
+        public int SelectedWindow = 0;
+        public int Width { get; set; } = Console.WindowWidth;
+        public int Height { get; set; } = Console.WindowHeight;
+        public Pixel[,] Buffer { get; set; }
+        public Pixel[,] TempBuffer { get; set; }
+        public ComponentControl ComponentControl { get; set; } = new ComponentControl();
 
-        public delegate void ResizeEvent(int width, int height);
+        private bool isDrawn = false;
+        private string outputString = "";
+        private ConsoleColor currentBGColor;
+        private ConsoleColor currentFGColor;
 
-        public static event ResizeEvent WindowResizedEvent;
+        public event EventHandler<WindowResizedEventArgs> WindowResizedEvent;
 
-        public static void Start()
+        public Window()
         {
+            FillBuffers(Width, Height);
+        }
+
+        public void Start()
+        {
+            Console.BufferHeight = Console.WindowHeight;
             CreateWindow();
-            while(true)
+            while (true)
             {
                 if (Height != Console.WindowHeight || Width != Console.WindowWidth)
                 {
                     //Necessary to be here to stop the statement above from being true IMMEDIATELY
                     Height = Console.WindowHeight;
                     Width = Console.WindowWidth;
+                    try
+                    {
+                        Console.BufferHeight = Console.WindowHeight;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
 
-                    OnResize();
+                    CreateWindow();
                 }
             }
         }
-        
-        private static void FillBuffers(int width, int height)
+
+        public int GetWidthByPortion(double portion)
+        {
+            return (int)Math.Round(Width * (portion / 100), 0);
+        }
+
+        public int GetHeightByPortion(double portion)
+        {
+            return (int)Math.Round(Height * (portion / 100), 0);
+        }
+
+        private void FillBuffers(int width, int height)
         {
             Buffer = new Pixel[width, height];
             TempBuffer = new Pixel[width, height];
@@ -52,43 +83,17 @@ namespace MsDos
             }
         }
 
-        private static void CreateWindow()
+        public void CreateWindow()
         {
-            Height = Console.WindowHeight;
-            Width = Console.WindowWidth;
-            Console.Clear();
             FillBuffers(Width, Height);
+            WindowResizedEvent?.Invoke(this, new WindowResizedEventArgs() { Width = Width, Height = Height });
 
-            RerenderWindowBuffers();
-        }
-
-        public static void RerenderWindowBuffers()
-        {
             Render();
         }
 
-        private static System.Timers.Timer _resizeTimer = new();
+        private System.Timers.Timer _resizeTimer = new();
 
-        static void _resizeTimer_Tick(object sender, ElapsedEventArgs e)
-        {
-            Console.CursorVisible = false;
-            _resizeTimer.Enabled = false;
-
-            if (IsResizing)
-            {
-                CreateWindow();
-            }
-        }
-        private static void OnResize()
-        {
-            WindowResizedEvent?.Invoke(Width, Height);
-            IsResizing = true;
-            _resizeTimer.Interval = 500;
-            _resizeTimer.Elapsed += new ElapsedEventHandler(_resizeTimer_Tick);
-            _resizeTimer.Enabled = true;
-        }
-
-        public static void Render()
+        public void Render()
         {
             IsResizing = false;
             for (var y = 0; y < Height - 1; y++)
@@ -96,25 +101,29 @@ namespace MsDos
                 for (var x = 0; x < Width; x++)
                 {
                     if (IsResizing)
-                    {
-                        IsResizing = false;
                         return;
-                    }
-                    
-                    Console.SetCursorPosition(x, y);
 
-                    if (Buffer[x, y] != TempBuffer[x, y])
+                    if (currentBGColor != Buffer[x, y].BackgroundColor || currentFGColor != Buffer[x, y].ForegroundColor)
                     {
-                        Console.BackgroundColor = Buffer[x, y].BackgroundColor;
-                        Console.ForegroundColor = Buffer[x, y].ForegroundColor;
-                        Console.Write(Buffer[x, y].Character);
-                        TempBuffer[x, y] = Buffer[x, y];
+                        WriteOutputString();
+                        currentBGColor = Buffer[x, y].BackgroundColor;
+                        currentFGColor = Buffer[x, y].ForegroundColor;
                     }
+
+                    outputString += Buffer[x, y].Character;
                 }
+                WriteOutputString();
             }
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.SetCursorPosition(0, 0);
             isDrawn = false;
+        }
+
+        private void WriteOutputString()
+        {
+            Console.BackgroundColor = currentBGColor;
+            Console.ForegroundColor = currentFGColor;
+            Console.Write(outputString);
+            outputString = "";
         }
     }
 }

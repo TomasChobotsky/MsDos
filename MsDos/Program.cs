@@ -1,15 +1,10 @@
-﻿using System;
-
-namespace MsDos
+﻿namespace MsDos
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-            Console.BufferHeight = Console.WindowHeight;
-
-            Console.ReadKey();
+            
         }
     }
 }

@@ -1,169 +1,177 @@
-﻿using System;
+﻿using MsDos.Contracts;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
+using MsDos.Core;
+using MsDos.Data;
 
 namespace MsDos
 {
     public class TableComponent : Component
     {
-        public List<Column> Columns { get; set; } = new List<Column>();
-        public string Header { get; set; }
-        public List<DirFile> Directories { get; set; } = new List<DirFile>();
-        public bool IsSelected { get; set; } = false;
+        public class ColumnDefinition
+        {
+            public int Portion;
+            public string Header;
+            public List<TableContent> DeserializedContent;
+            public List<string> Content { get; set; }
+
+            public ColumnDefinition(int portion, string header, List<string> content)
+            {
+                Portion = portion;
+                Header = header;
+                Content = content;
+
+                DeserializeContent();
+            }
+
+            public void DeserializeContent(int selectedIndex = 0)
+            {
+                DeserializedContent = new List<TableContent>();
+                foreach (var content in Content)
+                {
+                    DeserializedContent.Add(new TableContent(false, content));
+                }
+
+                if(DeserializedContent.Count > 0)
+                    DeserializedContent[selectedIndex].IsSelected = true;
+            }
+        }
+        
+        public List<ColumnDefinition> Columns { get; set; } = new List<ColumnDefinition>();
         public int SelectedIndex { get; set; } = 0;
 
-        private int offset = 0;
-        private int mouseY = 0;
-        
-        public TableComponent(int width, int height, int posX, int posY, string header)
+        public int Offset { get; set; } = 0;
+        public int MouseY { get; set; } = 0;
+
+        public TableComponent(double percentWidth, double percentHeight, double percentX, int posY, string header, 
+            ConsoleColor backgroundColor, ConsoleColor foregroundColor, IWindow window) : base(header, backgroundColor, foregroundColor, window)
         {
-            Width = width;
-            Height = height;
-            PosX = posX;
+            PercentWidth = percentWidth;
+            PercentHeight = percentHeight;
+            Width = window.GetWidthByPortion(percentWidth);
+            Height = window.GetHeightByPortion(percentHeight);
+
+            //PosX is currently defined in percentage to be responsible... Could be done with some kind of simplified FlexBox
+            //PosY doesn't need to be defined by percent, because it doesn't change when you resize your screen
+            PercentX = percentX;
+            PosX = (int)Math.Round(Width * (PercentX / 100), 0);
             PosY = posY;
-            Header = header;
         }
 
-        public void ChangeFocusedDirectory (int sum)
-        {
+        public void ChangeFocusedContent (int sum)
+        { 
             SelectedIndex += sum;
-            mouseY += sum;
+            MouseY += sum;
 
-            if (mouseY == Height - 4)
+            if (MouseY == Height - 5)
             {
-                mouseY -= sum;
+                MouseY -= sum;
                 
-                if (Directories.Count() - offset > Height - 4)
-                    offset++;
+                if (Columns[0].DeserializedContent.Count() - Offset > Height - 5)
+                    Offset++;
             }
-            if (mouseY == -1)
+            if (MouseY == -1)
             {
-                mouseY -= sum;
-                offset--;
+                MouseY -= sum;
+                Offset--;
             }
             
-            if (SelectedIndex == Directories.Count())
+            if (SelectedIndex == Columns[0].DeserializedContent.Count())
             {
                 SelectedIndex = 0;
-                mouseY = 0;
-                offset = 0;
+                MouseY = 0;
+                Offset = 0;
             }
             else if (SelectedIndex < 0)
             {
-                SelectedIndex = Directories.Count() - 1;
-                mouseY = Height - 5;
-                offset = Directories.Count() - (Height - 4);
-            }
-        }
-
-        public override void OnResize(int width, int height)
-        {
-            if (mouseY > height)
-            {
-                SelectedIndex = 0;
-                mouseY = 0;
-                offset = 0;
+                SelectedIndex = Columns[0].DeserializedContent.Count() - 1;
+                MouseY = Height - 5;
+                Offset = Columns[0].DeserializedContent.Count() - (Height - 5);
             }
             
-            Height = height;
-            Width = width;
-            //PosX = posX;
-            //PosY = posY;
+            EmptyComponent();
+            CreateBody();
+            CreateBorder();
+            Window.Render();
+        }
+        
+        
+        public override void OnResize(object sender, WindowResizedEventArgs e)
+        {
+            if (MouseY > Window.Height)
+            {
+                SelectedIndex = 0;
+                MouseY = 0;
+                Offset = 0;
+            }
+            
+            Height = (int)Math.Round(e.Height * (PercentHeight / 100));
+            Width = (int)Math.Round(e.Width * (PercentWidth / 100));
+            
+            PosX = (int)Math.Round(e.Width * (PercentX / 100), 0);
+            
+            CreateBorder();
+            CreateBody();
         }
 
-        public override void CreateComponent()
+        public override void CreateBody()
         {
-            int textPosition = Width / 2;
-            string text = $" {Header} ";
-            for (int x = 0; x < Width; x++)
-            {
-                if (x >= textPosition - text.Length / 2 && x < textPosition + text.Length / 2 + 1)
-                {
-                    if (IsSelected)
-                        Window.Buffer[x, 0] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.White,
-                            ConsoleColor.Black);
-                    else
-                        Window.Buffer[x, 0] = new Pixel(text[x - (textPosition - text.Length / 2)], ConsoleColor.Gray,
-                            ConsoleColor.Black);
-                }
-                else
-                    Window.Buffer[x, 0] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
-
-                Window.Buffer[x, Height - 2] = new Pixel('─', ConsoleColor.Blue, ConsoleColor.White);
-            }
-
-            for (int v = 1; v < Height - 2; v++)
-            {
-                Window.Buffer[0, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
-                Window.Buffer[Width - 1, v] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
-            }
-
-            int columnStartX = 0;
+            int columnStartX = PosX;
             foreach (var column in Columns)
             {
-                int columnWidth = Width * (column.Portion / 100);
-                int columnMiddle = columnWidth / 2;
-
-                for (int x = columnMiddle - column.Header.Length / 2; x < columnMiddle + column.Header.Length / 2; x++)
+                column.DeserializeContent(SelectedIndex);
+                int columnWidth = 0;
+                if (column.Portion == -1)
                 {
-                    Window.Buffer[x, 1] = new Pixel(column.Header[x - (columnMiddle - column.Header.Length / 2)],
-                        ConsoleColor.Blue, ConsoleColor.White);
+                    columnWidth = (Width + PosX) - columnStartX - 1;
                 }
+                else
+                {
+                    columnWidth = (int)Math.Floor(Width * ((double)column.Portion / 100));
+                }
+                int columnMiddle = (int)Math.Ceiling((double)columnWidth / 2);
 
-                int y = 2;
-                foreach (var content in column.Content)
+                for (int x = (columnMiddle - column.Header.Length / 2) + columnStartX; x < (columnMiddle + column.Header.Length / 2) + columnStartX; x++)
+                {
+                    if (x < 0)
+                        continue;
+                    Window.Buffer[x, PosY + 1] = new Pixel(column.Header[x - ((columnMiddle - column.Header.Length / 2) + columnStartX)],
+                        BgColor, FgColor);
+                }
+                Window.Buffer[columnWidth + columnStartX, PosY + 1] = new Pixel('│', BgColor, FgColor);
+                
+                var offsetContent = column.DeserializedContent.Skip(Offset).Take(column.DeserializedContent.Count - Offset);
+
+                int y = PosY + 2;
+                foreach (var content in offsetContent)
                 {
                     if (y > Height - 3)
                     {
-                        Window.Buffer[columnWidth, y] = new Pixel('│', ConsoleColor.Blue, ConsoleColor.White);
                         break;
                     }
 
-                    ConsoleColor bgColor = ConsoleColor.Blue;
-                    ConsoleColor fgColor = ConsoleColor.White;
+                    Window.Buffer[columnWidth + columnStartX, y] = new Pixel('│', BgColor, FgColor);
 
-                    for (int x = 0; x < Width - 1; x++)
+                    var bgColor = BgColor;
+                    
+                    if (content.IsSelected)
                     {
-                        if (x > content.Length)
-                            break;
+                        bgColor = ConsoleColor.Cyan;
+                    }
 
-                        Window.Buffer[x + 1, y] = new Pixel(content[x], bgColor, fgColor);
+                    for (int x = columnStartX; x < columnWidth + columnStartX - 1; x++)
+                    {
+                        if (x - columnStartX > content.Value.Length - 1)
+                            break;
+                        Window.Buffer[x + 1, y] = new Pixel(content.Value[x - columnStartX], bgColor, FgColor);
                     }
 
                     y++;
                 }
 
-            }
-        }
-
-        public override void Render()
-        {
-            for (int y = 0; y < Height - 1; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    Console.SetCursorPosition(x, y);
-                    
-                    if (Window.Buffer[x, y].Character != Window.TempBuffer[x, y].Character)
-                        Console.Write(Window.Buffer[x, y].Character);
-                    
-                    if (Window.Buffer[x, y].BackgroundColor != Window.TempBuffer[x, y].BackgroundColor)
-                        Console.BackgroundColor = Window.Buffer[x, y].BackgroundColor;
-                    
-                    if (Window.Buffer[x, y].ForegroundColor != Window.TempBuffer[x, y].ForegroundColor)
-                        Console.ForegroundColor = Window.Buffer[x, y].ForegroundColor;
-                }
-            }
-
-            for (int y = 0; y < Height - 1; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    Window.TempBuffer[x, y] = Window.Buffer[x, y];
-                }
+                columnStartX = columnWidth + columnStartX;
             }
         }
     }

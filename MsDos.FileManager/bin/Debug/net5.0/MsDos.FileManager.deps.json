@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "MsDos.FileManager/1.0.0": {
+        "dependencies": {
+          "MsDos": "1.0.0"
+        },
+        "runtime": {
+          "MsDos.FileManager.dll": {}
+        }
+      },
+      "MsDos/1.0.0": {
+        "runtime": {
+          "MsDos.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MsDos.FileManager/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MsDos/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
